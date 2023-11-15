@@ -1,67 +1,51 @@
-var TennisGame1 = function(player1Name, player2Name) {
-    this.m_score1 = 0;
-    this.m_score2 = 0;
-    this.player1Name = player1Name;
-    this.player2Name = player2Name;
-};
+class JogoDeTenis {
+    constructor(NomeJogador1, NomeJogador2) {
+        this.NomeJogador1 = NomeJogador1;
+        this.NomeJogador2 = NomeJogador2;
+        this.PontosJogador1 = 0;
+        this.PontosJogador2 = 0;
+    }
 
-TennisGame1.prototype.wonPoint = function(playerName) {
-    if (playerName === "player1")
-        this.m_score1 += 1;
-    else
-        this.m_score2 += 1;
-};
+    ganhouPonto(NomeJogador) {
+        NomeJogador === "jogador1" ? this.PontosJogador1++ : this.PontosJogador2++;
+    }
 
-TennisGame1.prototype.getScore = function() {
-    var score = "";
-    var tempScore = 0;
-    if (this.m_score1 === this.m_score2) {
-        switch (this.m_score1) {
-            case 0:
-                score = "Love-All";
-                break;
-            case 1:
-                score = "Fifteen-All";
-                break;
-            case 2:
-                score = "Thirty-All";
-                break;
-            default:
-                score = "Deuce";
-                break;
-        }
-    } else if (this.m_score1 >= 4 || this.m_score2 >= 4) {
-        var minusResult = this.m_score1 - this.m_score2;
-        if (minusResult === 1) score = "Advantage player1";
-        else if (minusResult === -1) score = "Advantage player2";
-        else if (minusResult >= 2) score = "Win for player1";
-        else score = "Win for player2";
-    } else {
-        for (var i = 1; i < 3; i++) {
-            if (i === 1) tempScore = this.m_score1;
-            else {
-                score += "-";
-                tempScore = this.m_score2;
-            }
-            switch (tempScore) {
-                case 0:
-                    score += "Love";
-                    break;
-                case 1:
-                    score += "Fifteen";
-                    break;
-                case 2:
-                    score += "Thirty";
-                    break;
-                case 3:
-                    score += "Forty";
-                    break;
-            }
+    getPontuacao() {
+        if (this.estaEmpatado()) {
+            return this.getEmpatado();
+        } else if (this.temVantagemOuVitoria()) {
+            return this.getVantagemOuVitoria();
+        } else {
+            return this.getPontuacaoNormalDoJogo();
         }
     }
-    return score;
-};
+
+    estaEmpatado() {
+        return this.PontosJogador1 === this.PontosJogador2;
+    }
+
+    getEmpatado() {
+        const empate = ["Love-All", "Fifteen-All", "Thirty-All", "Deuce"];
+        return empate[this.PontosJogador1] || empate[3];
+    }
+
+    temVantagemOuVitoria() {
+        return this.PontosJogador1 >= 4 || this.PontosJogador2 >= 4;
+    }
+
+    getVantagemOuVitoria() {
+        const resultado = this.PontosJogador1 - this.PontosJogador2;
+        if (resultado === 1) return "Vantagem " + this.NomeJogador1;
+        if (resultado === -1) return "Vantagem " + this.NomeJogador2;
+        return resultado >= 2 ? "Vitória para " + this.NomeJogador1 : "Vitória para " + this.NomeJogador2;
+    }
+
+    getPontuacaoNormalDoJogo() {
+        const NomePontuacao = ["Love", "Fifteen", "Thirty", "Forty"];
+        return NomePontuacao[this.PontosJogador1] + "-" + NomePontuacao[this.PontosJogador1];
+    }
+}
 
 if (typeof window === "undefined") {
-    module.exports = TennisGame1;
+    module.exports = JogoDeTenis;
 }
